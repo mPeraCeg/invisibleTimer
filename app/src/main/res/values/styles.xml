@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomSwitchStyle" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
+        <!-- Customize the attributes of the Switch element -->
+        <item name="android:thumb">@drawable/custom_switch_thumb</item>
+        <item name="android:track">@drawable/custom_switch_track</item>
+        <!-- Add more attributes as per your styling requirements -->
+    </style>
+
+</resources>

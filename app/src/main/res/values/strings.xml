@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">InvisibleTimer</string>
+    <string name="put_off">Put Off</string>
+    <string name="put_on">Put On</string>
+    <string name="start_counting">Start counting!</string>
+    <string name="stop_counting">Stop counting!</string>
+    <string name="coming_soon">Coming Soon!</string>
+    <string name="day_date_format">dd/MM/yyyy</string>
+    <string name="full_date_format">dd/MM/yyyy HH:mm:ss</string>
+    <string name="zero_time">0h00m00sec</string>
+</resources>
