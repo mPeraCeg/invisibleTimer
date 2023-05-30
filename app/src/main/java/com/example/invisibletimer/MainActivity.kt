@@ -19,6 +19,9 @@ class MainActivity : ComponentActivity() {
     var lastId: Int = 0
     var currentDate: Date = Date()
 
+    val mainUtils = MainUtils()
+    val databaseUtils = DatabaseUtils()
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,12 +66,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "VisibleForTests")
     private fun setup(dbHelper: MyDatabaseHelper) {
         // 1. Load last timer
         val timers = dbHelper.getAllTimers()
         if (timers.isEmpty()) {
-            insertTimer(dbHelper, 0, formatDateToString(Calendar.getInstance().time, getString(R.string.day_date_format)),
+            databaseUtils.insertTimer(dbHelper, 0, formatDateToString(Calendar.getInstance().time, getString(R.string.day_date_format)),
                 formatDateToString(Calendar.getInstance().time, getString(R.string.full_date_format)))
         }
         var lastTimer = timers.last()
@@ -78,10 +81,10 @@ class MainActivity : ComponentActivity() {
         on = lastTimer.end_time.isEmpty()
 
         // 3. Check if the day change
-        if (on && !sameDate(lastTimer.date, formatDateToString(currentDate, getString(R.string.day_date_format)))) {
+        if (on && !mainUtils.sameDate(lastTimer.date, formatDateToString(currentDate, getString(R.string.day_date_format)))) {
             val remainingTimeToMidnightSeconds = calculateTimeRemainingToMidnight(lastTimer.start_time)
-            updateDateTimer(dbHelper, lastTimer, lastTimer.start_time.split(" ")[0] + " 23:59:59", remainingTimeToMidnightSeconds)
-            insertTimer(dbHelper, lastId, formatDateToString(Calendar.getInstance().time, getString(R.string.day_date_format)),
+            databaseUtils.updateDateTimer(dbHelper, lastTimer, lastTimer.start_time.split(" ")[0] + " 23:59:59", remainingTimeToMidnightSeconds)
+            databaseUtils.insertTimer(dbHelper, lastId, formatDateToString(Calendar.getInstance().time, getString(R.string.day_date_format)),
                 formatDateToString(Calendar.getInstance().time, getString(R.string.full_date_format)).split(" ")[0] + " 00:00:01")
 
             lastTimer = dbHelper.getLastTimer()
@@ -99,7 +102,7 @@ class MainActivity : ComponentActivity() {
             val statusCircle = findViewById<ImageView>(R.id.statusCircle)
             statusCircle.setImageResource(R.drawable.baseline_circle_24_green)
             val lastTimerStartTimeDate = formatStringToDate(lastTimer.start_time)
-            timerText.text = secondsToReadableFormat(calculateTotalTimer(lastTimerStartTimeDate, currentDate).toString(), true)
+            timerText.text = mainUtils.secondsToReadableFormat(mainUtils.calculateTotalTimer(lastTimerStartTimeDate, currentDate).toString(), true)
         } else {
             timerText.text = getString(R.string.zero_time)
         }
@@ -107,7 +110,7 @@ class MainActivity : ComponentActivity() {
 
     private fun clickPutOnButton(dbHelper: MyDatabaseHelper) {
         // Insert timer
-        insertTimer(dbHelper, lastId, formatDateToString(Calendar.getInstance().time, getString(R.string.day_date_format)),
+        databaseUtils.insertTimer(dbHelper, lastId, formatDateToString(Calendar.getInstance().time, getString(R.string.day_date_format)),
             formatDateToString(Calendar.getInstance().time, getString(R.string.full_date_format)))
         val lastTimer = dbHelper.getLastTimer()
         lastId = lastTimer.id
@@ -122,8 +125,8 @@ class MainActivity : ComponentActivity() {
     private fun clickPutOffButton(dbHelper: MyDatabaseHelper) {
         // Update timer
         val lastTimer = dbHelper.getLastTimer()
-        val totalTime = calculateTotalTimer(formatStringToDate(lastTimer.start_time), Calendar.getInstance().time)
-        updateDateTimer(dbHelper, lastTimer,
+        val totalTime = mainUtils.calculateTotalTimer(formatStringToDate(lastTimer.start_time), Calendar.getInstance().time)
+        databaseUtils.updateDateTimer(dbHelper, lastTimer,
             formatDateToString(Calendar.getInstance().time, getString(R.string.full_date_format)),
             totalTime)
 
@@ -134,7 +137,7 @@ class MainActivity : ComponentActivity() {
         val putButton = findViewById<Button>(R.id.switchButton)
         putButton.text = getString(R.string.put_on)
         val totalTimeText = findViewById<TextView>(R.id.totalTimeTextView)
-        totalTimeText.text = secondsToReadableFormat(totalSumTime.toString(), true)
+        totalTimeText.text = mainUtils.secondsToReadableFormat(totalSumTime.toString(), true)
         val statusCircle = findViewById<ImageView>(R.id.statusCircle)
         statusCircle.setImageResource(R.drawable.baseline_circle_24_red)
     }
@@ -147,27 +150,6 @@ class MainActivity : ComponentActivity() {
 
         val diffSeconds = (midnightCalendar.time.time - formatStringToDate(startTime).time)/1000
         return diffSeconds.toDouble()
-    }
-
-    private fun secondsToReadableFormat(seconds: String, ui: Boolean): String {
-        val secondsFinal = (seconds.toDouble() % 60).toInt()
-        val minutes = (seconds.toDouble() / 60).toInt()
-        val minutesFinal = (minutes.toDouble() % 60).toInt()
-        val hoursFinal = (minutes.toDouble() / 60).toInt()
-        return if (ui) {
-            hoursFinal.toString() + "h" + minutesFinal.toString() + "m" + secondsFinal.toString() + "s"
-        } else {
-            "$hoursFinal:$minutesFinal:$secondsFinal"
-        }
-    }
-
-    private fun calculateTotalTimer(startTimer: Date, endTimer: Date): Double {
-        return ((endTimer.time - startTimer.time)/1000).toDouble()
-    }
-
-    private fun sameDate(lastDate: String, currentDate: String): Boolean {
-        // Return true if the current and the last date is the same
-        return lastDate.split('/')[0] == currentDate.split('/')[0]
     }
 
     private fun getSwitchButtonMessage(on: Boolean): String {
@@ -184,24 +166,6 @@ class MainActivity : ComponentActivity() {
     private fun formatStringToDate(date: String): Date {
         val format = SimpleDateFormat(getString(R.string.full_date_format), Locale.getDefault())
         return format.parse(date)
-    }
-
-    private fun insertTimer(dbHelper: MyDatabaseHelper, lastId: Int, date: String, start_time: String) {
-        dbHelper.insertTimer(Timer(
-            id = lastId+1,
-            date = date,
-            start_time = start_time,
-            end_time = "",
-            total = 0.0))
-    }
-
-    private fun updateDateTimer(dbHelper: MyDatabaseHelper, timer: Timer, endTime: String, totalTime: Double) {
-        dbHelper.updateTimer(Timer(
-            id = timer.id,
-            date = timer.date,
-            start_time = timer.start_time,
-            end_time = endTime,
-            total = totalTime))
     }
 
     private fun getDayTotalTime(dbHelper: MyDatabaseHelper): Double {
