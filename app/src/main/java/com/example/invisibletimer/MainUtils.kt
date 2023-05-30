@@ -27,9 +27,8 @@ class MainUtils {
     }
 
     fun sameDate(lastDate: String, currentDate: String): Boolean {
-        // TODO: Check all the date
         // Return true if the current and the last date is the same
-        return lastDate.split('/')[0] == currentDate.split('/')[0]
+        return lastDate.split('/') == currentDate.split('/')
     }
 
     fun calculateTimeRemainingToMidnight(startTime: String): Double {
