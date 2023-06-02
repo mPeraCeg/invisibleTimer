@@ -1,6 +1,7 @@
 package com.example.invisibletimer
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
@@ -29,6 +30,12 @@ class MainActivity : ComponentActivity() {
         val dbHelper = MyDatabaseHelper(this)
         setup(dbHelper)
 
+        // Set drawables
+        val historyButton = findViewById<Button>(R.id.historyButton)
+        historyButton.setBackgroundResource(R.drawable.icons8_history_50)
+        val metricsButton = findViewById<Button>(R.id.metricsButton)
+        metricsButton.setBackgroundResource(R.drawable.icons8_bar_chart_50)
+
         val putButton = findViewById<Button>(R.id.switchButton)
         putButton.setOnClickListener {
             // Button click event handler
@@ -45,16 +52,16 @@ class MainActivity : ComponentActivity() {
                 mainUtils.getSwitchButtonMessage(on), Toast.LENGTH_SHORT).show()
         }
 
-        val historyButton = findViewById<Button>(R.id.historyButton)
         historyButton.setOnClickListener {
-            // Button click event handler TODO
+            // Button click event handler
+            val historiyIntent = Intent(this, HistoryActivity::class.java)
+            startActivity(historiyIntent)
 
             // Display a toast message
             Toast.makeText(this@MainActivity,
                 getString(R.string.coming_soon), Toast.LENGTH_SHORT).show()
         }
 
-        val metricsButton = findViewById<Button>(R.id.metricsButton)
         metricsButton.setOnClickListener {
             // Button click event handler TODO
 

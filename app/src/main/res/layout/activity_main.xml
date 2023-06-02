@@ -58,25 +58,68 @@
 
     <LinearLayout
         android:paddingTop="16dp"
-        android:layout_width="wrap_content"
+        android:paddingBottom="16dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="24dp"
-        android:gravity="center"
-        android:orientation="vertical">
-        <Button
-            android:id="@+id/historyButton"
-            android:layout_width="150dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" >
+        </Space>
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:text="History" />
-        <Button
-            android:id="@+id/metricsButton"
-            android:layout_width="150dp"
+            android:orientation="vertical"
+            android:gravity="center_vertical|center_horizontal">
+            <Button
+                android:id="@+id/historyButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:textAlignment="center"
+                android:text="" />
+            <TextView
+                android:id="@+id/historicTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="History" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" >
+        </Space>
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:textSize="16sp"
-            android:text="Metrics" />
+            android:orientation="vertical"
+            android:gravity="center_vertical|center_horizontal">
+            <Button
+                android:id="@+id/metricsButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:textAlignment="center"
+                android:text="" />
+            <TextView
+                android:id="@+id/metricsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="Metrics" />
+        </LinearLayout>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" >
+        </Space>
+
     </LinearLayout>
 
 </LinearLayout>
