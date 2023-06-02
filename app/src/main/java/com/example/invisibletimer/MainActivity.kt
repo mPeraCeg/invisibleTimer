@@ -1,6 +1,7 @@
 package com.example.invisibletimer
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -27,7 +28,7 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_main)
 
         // Load data
-        val dbHelper = MyDatabaseHelper(this)
+        val dbHelper = DatabaseManager.getDatabaseHelper(this)
         setup(dbHelper)
 
         // Set drawables
@@ -56,10 +57,6 @@ class MainActivity : ComponentActivity() {
             // Button click event handler
             val historiyIntent = Intent(this, HistoryActivity::class.java)
             startActivity(historiyIntent)
-
-            // Display a toast message
-            Toast.makeText(this@MainActivity,
-                getString(R.string.coming_soon), Toast.LENGTH_SHORT).show()
         }
 
         metricsButton.setOnClickListener {
@@ -148,3 +145,15 @@ class MainActivity : ComponentActivity() {
     }
 
 }
+
+object DatabaseManager {
+    private var dbHelper: MyDatabaseHelper? = null
+
+    fun getDatabaseHelper(context: Context): MyDatabaseHelper {
+        if (dbHelper == null) {
+            dbHelper = MyDatabaseHelper(context.applicationContext)
+        }
+        return dbHelper as MyDatabaseHelper
+    }
+}
+

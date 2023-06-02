@@ -9,6 +9,16 @@ import java.util.Locale
 
 class MainUtils {
 
+    fun getStatusDrawable(totalTimer: String): Int {
+        val totalTimerSplit = totalTimer.split("h")
+        val totalHours = totalTimerSplit[0].toDouble()
+        return if (totalHours < 20.0) {
+            R.drawable.baseline_circle_24_red
+        } else {
+            R.drawable.baseline_circle_24_green
+        }
+    }
+
     @VisibleForTesting
     fun secondsToReadableFormat(seconds: String, ui: Boolean): String {
         val secondsFinal = (seconds.toDouble() % 60).toInt()
@@ -18,7 +28,20 @@ class MainUtils {
         return if (ui) {
             hoursFinal.toString() + "h" + minutesFinal.toString() + "m" + secondsFinal.toString() + "s"
         } else {
-            "$hoursFinal:$minutesFinal:$secondsFinal"
+            hoursFinal.toString() + "h" + minutesFinal.toString() + "m"
+            //"$hoursFinal$minutesFinal:$secondsFinal"
+        }
+    }
+
+    fun secondsToReadableFormat(seconds: Double, ui: Boolean): String {
+        val secondsFinal = (seconds % 60).toInt()
+        val minutes = (seconds / 60).toInt()
+        val minutesFinal = (minutes.toDouble() % 60).toInt()
+        val hoursFinal = (minutes.toDouble() / 60).toInt()
+        return if (ui) {
+            hoursFinal.toString() + "h" + minutesFinal.toString() + "m" + secondsFinal.toString() + "s"
+        } else {
+            hoursFinal.toString() + "h" + minutesFinal.toString() + "m"
         }
     }
 
